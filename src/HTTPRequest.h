@@ -1,20 +1,21 @@
 #ifndef HTTPREQUEST_H
 #define HTTPREQUEST_H
+using namespace std;
 
 #include <string>
 
 class HTTPRequest {
 private:
-    std::string method;
-    std::string uri;
-    std::string version;
+    string method;
+    string uri;
+    string version;
 
 public:
-    HTTPRequest(const std::string& raw_request);
+    HTTPRequest(const string& raw_request);
 
-    std::string getMethod()  const { return method;  }
-    std::string getURI()     const { return uri;     }
-    std::string getVersion() const { return version; }
+    string getMethod()  const { return method;  }
+    string getURI()     const { return uri;     }
+    string getVersion() const { return version; }
 };
 
 #endif
