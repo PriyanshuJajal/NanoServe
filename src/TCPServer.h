@@ -6,8 +6,6 @@
 #include <ws2tcpip.h> // Contains newer functions and structs for IP addresses
 using namespace std;
 
-#pragma comment(lib , "ws2_32.lib")
-
 class TCPServer {
 private:
     string ipAddress;

@@ -1,4 +1,4 @@
-#ifndef HTTPResponse.h
+#ifndef HTTPResponse_H
 #define HTTPRESPONSE_H
 
 #include <string>
