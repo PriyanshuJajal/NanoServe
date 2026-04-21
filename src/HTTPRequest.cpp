@@ -17,4 +17,11 @@ HTTPRequest::HTTPRequest(const string& raw_request) {
     if (method.empty())  method  = "GET";       
     if (uri.empty())     uri     = "/";         
     if (version.empty()) version = "HTTP/1.1";  
+
+    // Find the exact mandatory blank line that separates headers from the body
+    size_t body_seperator = raw_request.find("\r\n\r\n");
+
+    if (body_seperator != string::npos) {
+        body = raw_request.substr(body_seperator + 4);
+    }
 }
