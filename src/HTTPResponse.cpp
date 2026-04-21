@@ -17,7 +17,7 @@ string HTTPResponse::determineContentType(const string& filePath) {
         return "image/png";
     }
 
-    return "text/htmtl";
+    return "text/html";
 }
 
 string HTTPResponse::buildResponse(const string& method , const string& uri , const string& request_body) {
@@ -77,10 +77,9 @@ string HTTPResponse::buildResponse(const string& method , const string& uri , co
         }
     }
 
-    string content_type = "Content-Type: " + determineContentType(filePath) + "\r\n";
-    string content_length = "Content-Length: " + std::to_string(body.size()) + "\r\n"; 
-
-    string full_response = status_line + content_type + content_length + "\r\n" + body;
-
-    return full_response;
+    string content_type = "Content-Type: " + determineContentType(filePath) + "; charset=utf-8\r\n";
+    string connection = "Connection: close\r\n";
+    string content_length = "Content-Length: " + to_string(body.size()) + "\r\n";
+    
+    return status_line + content_type + connection + content_length + "\r\n" + body;
 }
