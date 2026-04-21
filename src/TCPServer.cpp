@@ -1,4 +1,6 @@
 #include "TCPServer.h"
+#include "HTTPRequest.h"
+#include "HTTPResponse.h"
 #include <iostream>
 using namespace std;
 
@@ -19,7 +21,6 @@ TCPServer::TCPServer(string ipAddress , int port)
         server_address.sin_port = htons(port);          // Convert port to network byte order
         server_address.sin_addr.s_addr = INADDR_ANY;    // Accept connections on any local IP
         
-        // Calling function to create and bind the server socket
         startServer();
 }
 
@@ -80,22 +81,26 @@ void TCPServer::startListen() {
             cerr << "[ERROR] Failed to read bytes from client\n";
         }
         else {
-            cout << "------ Received Request ------\n" << buffer << "\n------------------------------\n";
-
-            string response = 
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/plain\r\n"
-                "Content-Length: 21\r\n"
-                "\r\n"
-                "Hello from C++ Server";
+            string raw_request_str(buffer);
+            HTTPRequest request(raw_request_str);
             
-            // Send response back to client
-            send(client_socket , response.c_str() , response.size() , 0);
+            cout << "[INFO] Received " << request.getMethod() << " request for " << request.getURI() << "\n";
+
+            HTTPResponse response_builder;
+            string final_response = response_builder.buildResponse(
+                request.getMethod(), 
+                request.getURI(), 
+                request.getBody()
+            );
+            
+            // Send the formatted file/JSON back to the client
+            send(client_socket , final_response.c_str() , final_response.size() , 0);
             cout << "[INFO] Response sent to client\n";
         }
 
         closesocket(client_socket);
-        cout << "[INFO] Client socket closed. Waiting for next connection...\n\n";
+        
+        memset(buffer, 0, sizeof(buffer));
     }
 }
 
