@@ -10,7 +10,7 @@ private:
 
 public:
     // Takes the URI (e.g. "/about.html") and returns the full formatted HTTP response
-    string buildResponse(const string& uri);
+    string buildResponse(const string&  method , const string& uri , const string& request_body);
 };
 
 #endif
