@@ -46,6 +46,7 @@ string HTTPResponse::buildResponse(const string& method , const string& uri , co
     ifstream file(filePath , ios::in | ios::binary);
     string body;
     string status_line;
+    string content_type_str;
 
     if (file.is_open()) {
         // File exists! Read the entire thing into our 'body' string
@@ -56,10 +57,14 @@ string HTTPResponse::buildResponse(const string& method , const string& uri , co
 
         status_line = "HTTP/1.1 200 OK\r\n";
 
+        // Only use the file's extension if the file actually exists!
+        content_type_str = determineContentType(filePath);
         file.close();
     }
     else {
         status_line = "HTTP/1.1 404 Not Found\r\n";
+
+        content_type_str = "text/html";
 
         // Try to load a custom 404 file if it exists
         ifstream error_file("public/404.html");
@@ -77,9 +82,13 @@ string HTTPResponse::buildResponse(const string& method , const string& uri , co
         }
     }
 
-    string content_type = "Content-Type: " + determineContentType(filePath) + "; charset=utf-8\r\n";
-    string connection = "Connection: close\r\n";
-    string content_length = "Content-Length: " + to_string(body.size()) + "\r\n";
+    ostringstream response_stream;
+    response_stream << status_line
+                    << "Content-Type: " << content_type_str << "; charset=UTF-8\r\n"
+                    << "Connection: close\r\n"
+                    << "Content-Length: " << body.size() << "\r\n"
+                    << "\r\n"
+                    << body;
     
-    return status_line + content_type + connection + content_length + "\r\n" + body;
+    return response_stream.str();
 }
